@@ -23,7 +23,7 @@
 -keepclasseswithmembers class org.zurvfouchsprojekt.android.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
--keep class org.zurvfouchsprojekt.android.data.models.** { *; }
+-keep class org.zurvfouchs-bot.android.data.models.** { *; }
 
 # Network library rules (if not already covered)
 -keepattributes Signature
