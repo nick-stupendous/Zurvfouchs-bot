@@ -23,7 +23,7 @@ class OrbotApp : Application() {
         try {
             stateLocation = cacheDir.path
         } catch (_ : Exception) {
-            Log.e("OrbotApp", "Couldn't set PT state dir")
+            Log.e("Zurvfouchs-botApp", "Couldn't set PT state dir")
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
