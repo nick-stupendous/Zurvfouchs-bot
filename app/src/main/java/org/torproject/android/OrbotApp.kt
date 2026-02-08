@@ -13,7 +13,7 @@ import org.torproject.android.util.Prefs
 
 import java.util.Locale
 
-class OrbotApp : Application() {
+class Zurvfouchs-botApp : Application() {
 
 
     override fun onCreate() {
