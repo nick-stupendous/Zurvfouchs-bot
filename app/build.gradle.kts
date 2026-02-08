@@ -13,25 +13,28 @@ kotlin { jvmToolchain(21) }
 
 val orbotBaseVersionCode = 1790200200
 fun getVersionName(): String {
-    // Gets the version name from the latest Git tag
     return providers.exec {
         commandLine("git", "describe", "--tags", "--always")
     }.standardOutput.asText.get().trim()
 }
 
 android {
-    namespace = "org.torproject.android"
-    compileSdk = 36
+    namespace = "org.zurvfouchsprojekt.android"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = namespace
+        applicationId = "org.zurvfouchsprojekt.android"
         versionCode = orbotBaseVersionCode
         versionName = getVersionName()
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions += "free"
+
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+        }
     }
 
     compileOptions {
@@ -43,10 +46,6 @@ android {
         abi {
             isEnable = true
             reset()
-
-            // https://github.com/guardianproject/orbot-android/issues/1565
-            // include("armeabi-v7a", "arm64-v8a")
-
             include("x86", "armeabi-v7a", "x86_64", "arm64-v8a")
             isUniversalApk = true
         }
@@ -104,15 +103,17 @@ android {
         }
         create("nightly") {
             dimension = "free"
-            // overwrites defaults from defaultConfig
-            applicationId = "org.torproject.android.nightly"
+            applicationId = "org.zurvfouchsprojekt.android.nightly"
             versionCode = (Date().time / 1000).toInt()
         }
     }
 
     packaging {
         resources {
-            excludes += listOf("META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version")
+            excludes += listOf(
+                "META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version",
+                "/META-INF/{AL2.0,LGPL2.1}"
+            )
         }
     }
 
@@ -125,22 +126,18 @@ android {
         textReport = false
         xmlReport = false
     }
-
 }
 
-// Increments versionCode by ABI type and sets custom APK name
 android.applicationVariants.all {
-    outputs.configureEach { ->
+    outputs.configureEach {
         if (versionCode == orbotBaseVersionCode) {
             val incrementMap =
                 mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86" to 4, "x86_64" to 5)
             val increment = incrementMap[filters.find { it.filterType == "ABI" }?.identifier] ?: 0
             (this as ApkVariantOutputImpl).versionCodeOverride = orbotBaseVersionCode + increment
         }
-
-        // Set custom APK output name with version
         (this as ApkVariantOutputImpl).outputFileName =
-            outputFileName.replace("app-", "Orbot-${versionName}-")
+            outputFileName.replace("app-", "Zurvfouchs-Projekt-${versionName}-")
     }
 }
 
@@ -168,8 +165,6 @@ dependencies {
     implementation(files("../libs/geoip.jar"))
     api(libs.guardian.jtorctl)
     api(libs.tor.android)
-    // local tor-android:
-    // api(files("../../tor-android/tor-android-binary/build/outputs/aar/tor-android-binary-debug.aar"))
 
     testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
